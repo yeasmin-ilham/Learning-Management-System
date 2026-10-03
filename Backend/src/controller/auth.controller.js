@@ -9,7 +9,7 @@ import {
   import jwt from "jsonwebtoken"
 
 
-export async function signup(req, res, next){
+export async function signup(req, res){
 
         // 1. Request body থেকে data নেওয়া
        const {name , email , password} = req.body;
@@ -17,7 +17,12 @@ export async function signup(req, res, next){
     // 1. Check if a user with this email already exists
     const [existingUser] = await db
 
-    .select({id:users.id})
+    .select({  // select()-এর ভেতরে যে যে ফিল্ড দেবেন, রেসপন্সে শুধু সেগুলোই আসবে। select() খালি রাখলে সব response আসে, sensitive ফিল্ড (যেমন password) বাদ দেওয়ার জন্য খালি select() ব্যবহার না করে স্পষ্টভাবে ফিল্ডগুলো লিখে দেওয়াই সবচেয়ে নিরাপদ।
+      id:users.id,
+      name:users.name,
+      email:users.email,
+      createdAt:users.createdAt
+    })
     .from(users)
     .where(eq(users.email, email))
     .limit(1)  //"একটা পেলেই থামো, এর বেশি result লাগবে না।", ১০ জন matching user আমাদের দরকার নেই ,একজন পেলেই যথেষ্ট।
@@ -27,6 +32,7 @@ export async function signup(req, res, next){
             message:"Email already exist"
         })
     }
+    
 // user create in db
 const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -57,7 +63,7 @@ return res.status(201).json({
 }
 
 
-export async function login(req, res, next) {
+export async function login(req, res) {
 
     
   // 1. Request body থেকে data নেওয়া
@@ -74,7 +80,10 @@ export async function login(req, res, next) {
     const [user] = await db
     .select({
         id:users.id,
-        password:users.password
+        name:users.name,
+        email:users.email,
+        password:users.password, // পাসওয়ার্ড কোডের ভেতরে compare করতে লাগবে, তাই এনেছি। রেসপন্সে পাঠাব না।
+        
     })
     .from(users)
     .where(eq(users.email, email))

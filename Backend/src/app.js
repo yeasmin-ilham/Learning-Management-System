@@ -1,5 +1,6 @@
 import express from "express";
 import authRouter from "./routes/auth.route.js";
+import userRouter from "./routes/user.route.js"
 import { errorHandler } from "./middleware/error.middleware.js";
 import cookieParser from "cookie-parser";
 
@@ -10,6 +11,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/auth" , authRouter);
+app.use("/api/user", userRouter )
 
 
 app.use(errorHandler);

@@ -4,7 +4,7 @@ import { z} from "zod";
 export const signupSchema = z.object({
     name:z
     .string()
-    .trim() // trim() মাঝের space মুছে না:
+    .trim() // trim() মাঝের space মুছে 
     .min(2,"Name must be at least 2 characters")
     .max(100, "Name must be at most 100 characters" ),
 

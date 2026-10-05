@@ -17,12 +17,7 @@ export async function signup(req, res){
     // 1. Check if a user with this email already exists
     const [existingUser] = await db
 
-    .select({  // select()-এর ভেতরে যে যে ফিল্ড দেবেন, রেসপন্সে শুধু সেগুলোই আসবে। select() খালি রাখলে সব response আসে, sensitive ফিল্ড (যেমন password) বাদ দেওয়ার জন্য খালি select() ব্যবহার না করে স্পষ্টভাবে ফিল্ডগুলো লিখে দেওয়াই সবচেয়ে নিরাপদ।
-      id:users.id,
-      name:users.name,
-      email:users.email,
-      createdAt:users.createdAt
-    })
+    .select({id:users.id})
     .from(users)
     .where(eq(users.email, email))
     .limit(1)  //"একটা পেলেই থামো, এর বেশি result লাগবে না।", ১০ জন matching user আমাদের দরকার নেই ,একজন পেলেই যথেষ্ট।
@@ -41,7 +36,9 @@ const [user] = await db
     .values({name, email, password:hashedPassword})
     .returning({id:users.id,
                 name:users.name,
-                email:users.email});
+                email:users.email,
+                createdAt: users.createdAt
+              });
 
 
 // access Token 
@@ -95,7 +92,7 @@ if(!user){
     })
 }
 
-    // 6. Password compare করা
+    //  Password compare করা
 const isPasswordValid = await bcrypt.compare(password, user.password)
 
 
@@ -130,9 +127,11 @@ users.password মানে কলামের রেফারেন্স। �
 user.password মানে ওই row-এর আসল ভ্যালু (hash করা পাসওয়ার্ড স্ট্রিং)। এটা bcrypt.compare-এ যাবে। */
 
 export async function logout(req, res) {
-    
+
+  // browser cookie clear  
     res.clearCookie("refreshToken", refreshCookieOptions)
 
+// response
     return res.status(200).json({
     message: "Logout successful",
   });

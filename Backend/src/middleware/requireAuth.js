@@ -1,38 +1,51 @@
 
 
-//  requireAuth middleware শুধু access token verify করে
+
+// requireAuth middleware 1)শুধু access token verify করে, 2)Database-এ User খোঁজে-যে ইউজার API request করেছে, 3)req.user সেট করে
+
 
 import jwt from "jsonwebtoken";
+import { eq } from "drizzle-orm";
+import { db } from "../db/db.js";
+import { users } from "../db/schema/index.js";
 
-export const requireAuth = (req, res, next) => {
+export const requireAuth = async (req, res, next) => {
 
-    // Authorization header থেকে token নেয়
-    const token = req.headers.authorization?.split(" ")[1];
+  // Read token from user Authorization header
+  const token = req.headers.authorization?.split(" ")[1];
 
-    if (!token) {
-        return res.status(401).json({
-            message: "Access token required",
-        });
-    }
+  if (!token) {
+    return res.status(401).json({
+      message: "Access token required",
+    });
+  }
 
-    // JWT verify করে
-    try {
-        const payload = jwt.verify(
-            token,
-            process.env.ACCESS_TOKEN_SECRET
-        );
+  let payload;
 
+  // access Token verify করে
+  try {
+    payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+  } catch {
+    return res.status(401).json({
+      message: "Invalid or expired token",
+    });
+  }
 
-        // Valid হলে req.user.id সেট করে
-        req.user = {
-            id: payload.id,
-        };
+  // Database-এ User খোঁজে(যে ইউজার API request করেছে) --যার id ,Token-এর payload.id মিলে (never select the password)
+  const [user] = await db
+    .select({ id: users.id, email: users.email, role: users.role })
+    .from(users)
+    .where(eq(users.id, payload.id));
 
-      // তারপর next() দিয়ে controller-এ পাঠায়  
-        next();
-    } catch {
-        return res.status(401).json({
-            message: "Invalid or expired token",
-        });
-    }
+  if (!user) {
+    return res.status(401).json({
+      message: "User no longer exists",
+    });
+  }
+
+  //  req.user সেট করে
+  req.user = user;
+
+ // তারপর next() দিয়ে middleware/controller-এ পাঠায় 
+  next();
 };

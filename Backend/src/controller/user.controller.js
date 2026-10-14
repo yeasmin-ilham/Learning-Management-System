@@ -1,6 +1,6 @@
 import { eq , and, ne } from "drizzle-orm";
 import {db} from "../db/db.js";
-import {users} from "../db/schema.js";
+import {users} from "../db/schema/users.schema.js";
 import { refreshCookieOptions } from "../utils/token.js";
 import bcrypt from "bcrypt";
 

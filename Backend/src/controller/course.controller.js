@@ -1,0 +1,54 @@
+import { db } from "../db/db.js";
+import { courses } from "../db/schema/index.js";
+
+// এই slugify() function-এর কাজ হলো কোনো text-কে URL-friendly slug-এ convert করা
+const slugify = (text) =>
+  text
+    .toLowerCase()
+    .trim() // Text-এর শুরুতে ও শেষে থাকা extra whitespace সরিয়ে দেয়
+    .replace(/[^a-z0-9\s-]/g, "") // English letter, number, whitespace এবং hyphen (-) ছাড়া অন্য character সরিয়ে দেয়
+    .replace(/\s+/g, "-") // এক বা একাধিক whitespace-কে একটি hyphen (-) দিয়ে replace করে
+    .replace(/-+/g, "-") // পাশাপাশি একাধিক hyphen থাকলে একটিতে পরিণত করে
+    .replace(/^-|-$/g, ""); // Text-এর শুরুতে বা শেষে hyphen থাকলে সরিয়ে দেয়
+
+
+export const createCourse = async (req, res) => {
+
+// req body থেকে ডেটা নেওয়া
+  const { title, description, thumbnailUrl, level, status, price } = req.body;
+
+  // user নিজে slug পাঠালে সেটাই ব্যবহার হয়। না পাঠালে slugify দিয়ে title থেকে বানানো হয়
+  const slug = req.body.slug ?? slugify(title); // ?? মানে: বাম পাশের value null হলে ডান পাশের value নাও
+
+
+  if (!slug) {
+    return res.status(400).json({
+      success: false,
+      message: "Could not generate a slug from the title. Please provide a slug.",
+    });
+  }
+
+// ডাটাবেসে new course create
+    const [course] = await db
+      .insert(courses)
+      .values({
+        instructorId: req.user.id,
+        title,
+        slug,
+        description,
+        thumbnailUrl,
+        level,
+        status,
+        price,
+        isFree: price === 0,
+        publishedAt: status === "published" ? new Date() : null,
+      })
+      .returning();
+
+    return res.status(201).json({
+      success: true,
+      message: "Course created successfully",
+      data: course,
+    });
+  } 
+;

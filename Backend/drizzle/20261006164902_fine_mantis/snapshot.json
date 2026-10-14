@@ -1,7 +1,7 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "3001c01a-73fd-4725-9c40-b43dae36c35a",
+  "id": "58a3c4fb-1ecd-4cbc-9341-963357199a99",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -13,29 +13,20 @@
       "schema": "public"
     },
     {
-      "type": "integer",
+      "type": "uuid",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
-      "default": null,
+      "default": "gen_random_uuid()",
       "generated": null,
-      "identity": {
-        "type": "always",
-        "name": "users_id_seq",
-        "increment": "1",
-        "startWith": "1",
-        "minValue": "1",
-        "maxValue": "2147483647",
-        "cache": 1,
-        "cycle": false
-      },
+      "identity": null,
       "name": "id",
       "entityType": "columns",
       "schema": "public",
       "table": "users"
     },
     {
-      "type": "varchar(255)",
+      "type": "varchar(100)",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
@@ -43,19 +34,6 @@
       "generated": null,
       "identity": null,
       "name": "name",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "users"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "age",
       "entityType": "columns",
       "schema": "public",
       "table": "users"
@@ -69,6 +47,45 @@
       "generated": null,
       "identity": null,
       "name": "email",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "users"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "password",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "users"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "users"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
       "entityType": "columns",
       "schema": "public",
       "table": "users"

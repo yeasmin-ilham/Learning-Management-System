@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import {users} from "../db/schema.js"
+import {users} from "../db/schema/users.schema.js"
 import bcrypt from "bcrypt"
 import { db } from "../db/db.js";
 import {

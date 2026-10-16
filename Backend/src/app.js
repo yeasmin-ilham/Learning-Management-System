@@ -2,6 +2,7 @@ import express from "express";
 import authRouter from "./routes/auth.route.js";
 import userRouter from "./routes/user.route.js"
 import courseRouter from "./routes/course.route.js"
+import instructorApplicationRoutes from "./routes/instructorApplication.route.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 import cookieParser from "cookie-parser";
 
@@ -14,6 +15,7 @@ app.use(cookieParser());
 app.use("/api/auth" , authRouter);
 app.use("/api/user", userRouter );
 app.use("/api/course", courseRouter);
+app.use("/api/instructor-applications", instructorApplicationRoutes);
 
 
 app.use(errorHandler);

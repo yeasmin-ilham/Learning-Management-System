@@ -12,7 +12,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-import { users } from "../schema/users.schema.js";
+import { users } from "./users.schema.js";
 
 export const courseLevelEnum = pgEnum("course_level", [
   "beginner",
@@ -51,14 +51,12 @@ export const courses = pgTable(
 
 
 
- /*  একটি টেবিলের ইনডেক্স (index) ডিফিনিশন
-
-  এই ইনডেক্সগুলো দেওয়া হয়েছে যাতে courses টেবিলে সার্চ করার সময় ডাটাবেসকে পুরো টেবিল স্ক্যান করতে না হয়।
-   ইনডেক্স ছাড়া কুয়েরি চালালে ডাটাবেস প্রতিটি রো দেখে দেখে মেলায় (sequential scan); 
-   ইনডেক্স থাকলে সরাসরি দরকারি রো-তে পৌঁছে যায়, অনেকটা বইয়ের শেষের সূচিপত্র দেখে সরাসরি পৃষ্ঠায় যাওয়ার মতো। */
+ /* একটি টেবিলের (index):
+ database table-এ index ব্যবহার করা হয় data দ্রুত খুঁজে বের করার জন্য
+  এই courses টেবিলে index দেওয়া হয়েছে যাতে courses টেবিলে সার্চ করার সময় data দ্রুত খুঁজে বের করা যায় */
    
   (table) => [
-    uniqueIndex("courses_slug_unique_idx").on(table.slug), // এটি slug column-এর ওপর index তৈরি করে & Unique করে 
+    uniqueIndex("courses_slug_unique_idx").on(table.slug), // এটি courses table-এ slug column Unique করে & এর ওপর index তৈরি করে  
     index("courses_instructor_id_idx").on(table.instructorId), // এটি instructorId column-এর ওপর index তৈরি করে, যাতে নির্দিষ্ট Instructor-এর Course খুঁজতে সুবিধা হয়
     index("courses_status_idx").on(table.status), // এটি status column-এর ওপর index তৈরি করে
   ],

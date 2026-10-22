@@ -17,7 +17,7 @@ export const applicationStatusEnum = pgEnum("application_status", [
   "rejected",
 ]);
 
-export const instructorApplications = pgTable( "instructor_applications",{
+export const instructorApplications = pgTable( "instructor_applications",{ // One-to-Many (1:N) relationship-এ সাধারণত Many side-এর table-এ Foreign Key (FK) থাকে
 
     id: uuid("id").primaryKey().defaultRandom(),
     userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }), // Foreign Key (FK)

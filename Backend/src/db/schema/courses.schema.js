@@ -26,9 +26,7 @@ export const courseStatusEnum = pgEnum("course_status", [
   "archived",
 ]);
 
-export const courses = pgTable(
-  "courses",
-  {
+export const courses = pgTable( "courses",{
     id: uuid("id").primaryKey().defaultRandom(),
 
     title: varchar("title", { length: 255 }).notNull(),

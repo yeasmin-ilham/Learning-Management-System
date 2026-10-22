@@ -1,6 +1,7 @@
 
 import { defineRelations } from "drizzle-orm";
 import * as schema from "./schema/index.js";
+import { user } from "pg/lib/defaults";
 
 export const relations = defineRelations(schema, (r) => ({
 
@@ -25,15 +26,34 @@ export const relations = defineRelations(schema, (r) => ({
       to: r.instructorApplications.reviewedBy,
       alias: "reviewer",
     }),
+
+ // একজন User অনেক enrollments তৈরি করতে পারে (one-to-many)
+   studentEnrollments: r.many.enrollments({
+    from:r.users.id,
+    to:r.enrollments.userId,
+   })
+
+
   },
 
+
   courses: {
+
       // প্রতিটি Course-এর একজন Instructor থাকবে
     instructor: r.one.users({
       from: r.courses.instructorId,
       to: r.users.id,
       optional: false,
     }),
+
+// একটি Course-অনেক এ enrollment করতে পারে
+courseEnrollments:r.many.enrollments({
+  from:r.courses.id,
+  to:r.enrollments.courseId
+}) 
+
+
+
   },
 
 
@@ -53,4 +73,21 @@ export const relations = defineRelations(schema, (r) => ({
       alias: "reviewer",
     }),
   },
+
+  enrollments: {
+
+      student: r.one.users({
+      from:r.enrollments.userId,
+      to:r.users.id,
+      optional:false,
+      })
+  },
+
+  course: r.one.courses({
+    from:r.enrollments.courseId,
+    to:r.courses.id,
+    optional:false
+  })
+
+
 }));

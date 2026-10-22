@@ -3,4 +3,5 @@
 
 export * from "./users.schema.js";
 export * from "./courses.schema.js";
-export * from "./instructor-application.schema.js"
+export * from "./instructor-application.schema.js";
+export * from "./enrollments.schema.js";

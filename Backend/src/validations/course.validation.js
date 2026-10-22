@@ -14,3 +14,25 @@ export const createCourseSchema = z.object({
   status: z.enum(["draft", "published", "archived"]).default("draft"),
   price: z.coerce.number().min(0, "Price cannot be negative").max(99999999.99).default(0),
 });
+
+
+
+export const courseIdParamSchema = z.object({
+  id: z.string().uuid(),    // id-টি অবশ্যই UUID format-এর হতে হবে
+});
+
+
+export const updateCourseSchema = z.object({
+    title: z.string().trim().min(3).max(255),
+    description: z.string().trim().min(20),
+    thumbnailUrl: z.string().trim().url().nullable(),
+    level: z.enum(["beginner", "intermediate", "advanced"]),
+    price: z.number().min(0).max(99999999.99),
+  })
+  .partial()
+  .strict()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "At least one field is required",
+  });
+
+

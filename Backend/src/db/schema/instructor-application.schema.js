@@ -20,11 +20,11 @@ export const applicationStatusEnum = pgEnum("application_status", [
 export const instructorApplications = pgTable( "instructor_applications",{
 
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }), // Forgien
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }), // Foreign Key (FK)
     expertise: varchar("expertise", { length: 150 }).notNull(),
     bio: text("bio").notNull(),
     status: applicationStatusEnum("status").notNull().default("pending"),
-    reviewedBy: uuid("reviewed_by").references(() => users.id, { onDelete: "set null" }),
+    reviewedBy: uuid("reviewed_by").references(() => users.id, { onDelete: "set null" }), // Foreign Key (FK)
     reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),

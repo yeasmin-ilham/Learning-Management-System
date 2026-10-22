@@ -17,4 +17,5 @@ router.get("/", requireAuth, authorizeRoles("admin"), getApplications);
 router.patch("/:id/approve", requireAuth, authorizeRoles("admin"), approveApplication);
 router.patch("/:id/reject", requireAuth, authorizeRoles("admin"), rejectApplication);
 
+
 export default router;

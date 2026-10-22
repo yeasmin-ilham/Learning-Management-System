@@ -42,7 +42,7 @@ export const courses = pgTable(
     price: numeric("price", { precision: 10, scale: 2 }).notNull().default("0.00"),
     isFree: boolean("is_free").notNull().default(true),
 
-    instructorId: uuid("instructor_id").notNull().references(() => users.id, { onDelete: "restrict" }), // relation er jonno ashche
+    instructorId: uuid("instructor_id").notNull().references(() => users.id, { onDelete: "restrict" }), // Foreign Key (FK)
 
     publishedAt: timestamp("published_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

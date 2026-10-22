@@ -6,7 +6,7 @@ export const applyInstructorSchema = z.object({
 });
 
 export const applicationIdParamSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().uuid(),    // id-টি অবশ্যই UUID format-এর হতে হবে
 });
 
 export const applicationStatusQuerySchema = z.object({

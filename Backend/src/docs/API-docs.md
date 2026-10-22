@@ -1,65 +1,73 @@
+# LMS Core API Endpoints
 
-// This file---only for Guideline
+## Auth 
+- POST /api/auth/signup — নতুন account তৈরি, role সবসময় student হবে।
+- POST /api/auth/login — email ও password দিয়ে login, access token ও refresh token পাওয়া।
+- POST /api/auth/refresh — refresh token দিয়ে নতুন access token নেওয়া।
+- POST /api/auth/logout — refresh token বাতিল করে logout করা।
 
-1. Admin API Endpoints
+## User Profile (নিজের প্রোফাইল), Student Management
+- GET /api/users/me — logged in user এর নিজের তথ্য দেখা।
+- PATCH /api/users/me — নিজের নাম ইত্যাদি তথ্য আপডেট করা।
+- PATCH /api/users/me/password — পুরনো password দিয়ে নতুন password সেট করা।
 
-admin User Management (ইউজার পরিচালনা)
-- GET /api/admin/users — সব user-এর তালিকা দেখা।
-- GET /api/admin/users/:id — নির্দিষ্ট user-এর details দেখা।
-- PATCH /api/admin/users/:id/role — user-এর role পরিবর্তন করা, যেমন student থেকে instructor।
-- PATCH /api/admin/users/:id/status — user-কে active বা suspended করা।
+## Instructor Application (instructor হওয়ার আবেদন)
+- POST /api/instructor-applications — student এর instructor হওয়ার আবেদন জমা দেওয়া (student)।
+- GET /api/instructor-applications/me — নিজের আবেদনের অবস্থা দেখা: pending, approved বা rejected (student, instructor)।
+- GET /api/instructor-applications — সব আবেদনের তালিকা, (admin)।
+- PATCH /api/instructor-applications/:id/approve — আবেদন approve করা, user এর role instructor হয়ে যায় (admin)।
+- PATCH /api/instructor-applications/:id/reject — আবেদন reject করা (admin)।
+
+## Public Course (login ছাড়া সবাই দেখতে পারবে)
+- GET /api/courses — শুধু published course এর তালিকা।
+- GET /api/courses/:slug — একটা published course এর বিস্তারিত, section ও lesson এর শিরোনাম সহ।
+
+## Instructor Course Management (instructor এর নিজের course)
+- POST /api/courses — নতুন course তৈরি, শুরুতে status draft থাকে।
+- GET /api/courses/my-courses — নিজের তৈরি সব course এর তালিকা।
+- GET /api/courses/my-courses/:id — নিজের একটা course এর বিস্তারিত, draft সহ।
+- PATCH /api/courses/my-courses/:id —  আপডেট করা।
+- DELETE /api/courses/my-courses/:id — শুধু draft course মুছে ফেলা।
+- PATCH /api/courses/my-courses/:id/submit —
+- PATCH /api/courses/my-courses/:id/archive — published course archive করা।
+- GET /api/courses/my-courses/:id/students — এই course এ কারা enroll করেছে তার তালিকা।
+
+## Section Management (course এর অধ্যায়, instructor)
+- POST /api/courses/my-courses/:courseId/sections — course এ নতুন section যোগ করা।
+- PATCH /api/sections/:id — section এর নাম বা ক্রম বদলানো।
+- DELETE /api/sections/:id — section মুছে ফেলা।
+
+## Lesson Management (section এর পাঠ, instructor)
+- POST /api/sections/:sectionId/lessons — section এ নতুন lesson যোগ করা (title, video url, content, ক্রম)।
+- PATCH /api/lessons/:id — lesson এর তথ্য আপডেট করা।
+- DELETE /api/lessons/:id — lesson মুছে ফেলা।
+
+## Enrollment (ভর্তি, student)
+- POST /api/courses/:id/enroll — course এ ভর্তি হওয়া।
+- GET /api/enrollments/my — নিজের ভর্তি হওয়া সব course এর তালিকা।
+- GET /api/enrollments/my/:courseId/content — ভর্তি থাকলে course এর সব section ও lesson এর আসল content দেখা।
+
+## Progress (অগ্রগতি, student)
+- POST /api/lessons/:id/complete — lesson শেষ হয়েছে বলে চিহ্নিত করা।
+- DELETE /api/lessons/:id/complete — lesson এর complete চিহ্ন সরানো।
+- GET /api/enrollments/my/:courseId/progress — course এর কত শতাংশ শেষ হয়েছে দেখা।
+
+## Admin Course Management (course পরিচালনা)
+- GET /api/admin/courses — সব course এর তালিকা, ?status=pending দিয়ে approval queue দেখা।
+- GET /api/admin/courses/:id — যেকোনো course এর বিস্তারিত দেখা।
+- PATCH /api/admin/courses/:id/approve — pending course approve করে published করা।
+- PATCH /api/admin/courses/:id/reject — pending course reject করে আবার draft এ ফেরত পাঠানো, কারণ সহ।
+- PATCH /api/admin/courses/:id/archive — প্রয়োজনে যেকোনো course archive করা।
+
+## Admin User Management (ইউজার পরিচালনা)
+- GET /api/admin/users — সব user এর তালিকা, ?role=&page= দিয়ে filter।
+- GET /api/admin/users/:id — নির্দিষ্ট user এর details দেখা।
+- PATCH /api/admin/users/:id/role — user এর role পরিবর্তন করা, নিজের role ছাড়া।
+- PATCH /api/admin/users/:id/status — user কে active বা suspended করা।
 - DELETE /api/admin/users/:id — user delete করা।
-admin Instructor Management (ইনস্ট্রাক্টর পরিচালনা)
-- GET /api/admin/instructors — সব instructor দেখা।
-- GET /api/admin/instructor-applications — instructor applications দেখা।
-- PATCH /api/admin/instructor-applications/:id/approve — instructor application approve করা।
-- PATCH /api/admin/instructor-applications/:id/reject — application reject করা।
-admin Course Management (কোর্স পরিচালনা)
-- GET /api/admin/courses — সব course দেখা।
-- PATCH /api/admin/courses/:id/status — course publish, unpublish বা suspend করা।
-- DELETE /api/admin/courses/:id — অনুপযুক্ত course delete করা।
 
-
-
-2. Instructor API Endpoints
-
-Instructor Application (ইনস্ট্রাক্টর হওয়ার আবেদন)
-যদি Admin approval system রাখো, তাহলে student প্রথমে instructor হওয়ার আবেদন করবে।
-- POST /api/instructor-applications — Instructor হওয়ার আবেদন করা।
-- GET /api/instructor-applications/me — নিজের application status দেখা।
-- GET /api/admin/instructor-applications — Admin সব application দেখবে।
-- PATCH /api/admin/instructor-applications/:id/approve — Admin application approve করবে।
-- PATCH /api/admin/instructor-applications/:id/reject — Admin application reject করবে।
- Instructor Course Management (কোর্স তৈরি ও পরিচালনা)
-- POST /api/instructor/courses — নতুন course তৈরি করা।
-- GET /api/instructor/courses — নিজের তৈরি করা সব course দেখা।
-- GET /api/instructor/courses/:id — নিজের নির্দিষ্ট course-এর details দেখা।
-- PATCH /api/instructor/courses/:id — নিজের course update করা।
-- DELETE /api/instructor/courses/:id — নিজের course delete করা।
-Course Publishing (কোর্স প্রকাশ করা)
-- PATCH /api/instructor/courses/:id/submit — Review-এর জন্য course submit করা।
-- PATCH /api/instructor/courses/:id/publish — Course publish করা, যদি তোমার LMS-এ instructor-কে এই permission দেওয়া হয়।
-- PATCH /api/instructor/courses/:id/unpublish — নিজের course unpublish করা।
-Course Content Management (লেকচার ও মডিউল)
-- POST /api/instructor/courses/:courseId/sections — Course-এর section তৈরি করা।
-- PATCH /api/instructor/sections/:id — Section update করা।
-- DELETE /api/instructor/sections/:id — Section delete করা।
-- POST /api/instructor/sections/:sectionId/lessons — Lesson তৈরি করা।
-- PATCH /api/instructor/lessons/:id — Lesson update করা।
-- DELETE /api/instructor/lessons/:id — Lesson delete করা।
-Instructor Dashboard
-- GET /api/instructor/dashboard — নিজের course, enrollment ও earnings summary দেখা।
-- GET /api/instructor/courses/:id/students — নির্দিষ্ট course-এর enrolled students দেখা।
-- GET /api/instructor/earnings — নিজের earnings দেখা, যদি payment ও revenue-sharing system থাকে।
-
-
-
-3.Student Management
-
-- GET /api/users/me — নিজের profile দেখা।
-- PATCH /api/users/me — নিজের profile update করা।
-- DELETE /api/users/me — নিজের account delete করা।
-- GET /api/users/me/courses — নিজের enrolled courses দেখা।
+## Admin Dashboard (পরিসংখ্যান)
+- GET /api/admin/stats — মোট user, course, enrollment ও pending আবেদনের সংখ্যা।
 
 
 
